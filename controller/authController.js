@@ -18,8 +18,43 @@ const loggedUser = (req, res) => {
     })
 }
 
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+
+        await authService.generateResetToken(email)
+
+        res.json({
+            message: 'Password reset link generated and sent to your email'
+        })
+    }
+    catch (err) {
+        res.status(400).json({
+            message: err.message
+        })
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const { resetToken } = req.params
+        const { newPassword } = req.body
+
+        const result = await authService.resetPassword(resetToken, newPassword)
+
+        res.json(result)
+    }
+    catch (err) {
+        res.status(400).json({
+            message: err.message
+        })
+    }
+}
+
 module.exports = {
     register,
     login,
-    loggedUser
+    loggedUser,
+    forgotPassword,
+    resetPassword
 }
