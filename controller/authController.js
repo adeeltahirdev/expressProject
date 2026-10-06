@@ -12,7 +12,14 @@ const login = async (req, res) => {
     res.status(201).json(result)
 }
 
+const loggedUser = (req, res) => {
+    res.status(200).json({
+        user: req.user
+    })
+}
+
 module.exports = {
     register,
-    login
+    login,
+    loggedUser
 }
