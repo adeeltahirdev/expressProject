@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const authRoute = require('./routes/authRoute')
 const connectDB = require('./config/db')
+const errorMiddleware = require('./middleware/errorMiddleware')
 
 app.use(express.json())
 
@@ -10,6 +11,9 @@ app.use(express.json())
 connectDB()
 
 app.use('/auth', authRoute)
+
+// Error handling middleware
+app.use(errorMiddleware)
 
 const PORT = process.env.PORT || 3500
 

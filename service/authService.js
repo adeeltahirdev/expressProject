@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const User = require('../model/User')
+const AppError = require('../utils/AppError')
 
 const registeruser = async (userData) => {
     const { name, email, password} = userData
@@ -9,7 +10,7 @@ const registeruser = async (userData) => {
     const existingUser = await User.findOne({email})
 
     if (existingUser) {
-        throw new Error('User already exists')
+        throw new AppError('User already exists', 409)
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -35,13 +36,13 @@ const loginUSer = async (userData) => {
     const user = await User.findOne({email})
 
     if (!user) {
-        throw new Error('Invalid email or password')
+        throw new AppError('Invalid email or password', 401)
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password)
 
     if (!isPasswordValid) {
-        throw new Error('Invalid email or password')
+        throw new AppError('Invalid email or password', 401)
     }
 
     const token = jwt.sign(
@@ -64,7 +65,7 @@ const generateResetToken = async (email) => {
     const user = await User.findOne({ email })
 
     if (!user) {
-        throw new Error('User not found')
+        throw new AppError('User not found', 404)
     }
 
     const resetToken = crypto.randomBytes(64).toString('hex')
@@ -88,7 +89,7 @@ const resetPassword = async (resetToken, newPassword) => {
     })
 
     if (!user) {
-        throw new Error('Invalid or expired reset token')
+        throw new AppError('Invalid or expired reset token', 400)
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)

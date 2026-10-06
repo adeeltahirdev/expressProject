@@ -1,15 +1,26 @@
 const authService = require('../service/authService')
 
-const register = async (req, res) => {
-    const result = await authService.registeruser(req.body)
-    
-    res.status(201).json(result)
+const register = async (req, res, next) => {
+    try {
+        const result = await authService.registeruser(req.body)
+        
+        res.status(201).json(result)
+    }
+    catch (err) {
+        next(err)
+    }
 }
 
-const login = async (req, res) => {
-    const result = await authService.loginUSer(req.body)
-    
-    res.status(201).json(result)
+const login = async (req, res, next) => {
+    try {
+
+        const result = await authService.loginUSer(req.body)
+        
+        res.status(200).json(result)
+    }
+    catch (err) {
+        next(err)
+    }
 }
 
 const loggedUser = (req, res) => {
@@ -18,7 +29,7 @@ const loggedUser = (req, res) => {
     })
 }
 
-const forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body
 
@@ -29,13 +40,11 @@ const forgotPassword = async (req, res) => {
         })
     }
     catch (err) {
-        res.status(400).json({
-            message: err.message
-        })
+        next(err)
     }
 }
 
-const resetPassword = async (req, res) => {
+const resetPassword = async (req, res, next) => {
     try {
         const { resetToken } = req.params
         const { newPassword } = req.body
@@ -45,9 +54,7 @@ const resetPassword = async (req, res) => {
         res.json(result)
     }
     catch (err) {
-        res.status(400).json({
-            message: err.message
-        })
+        next(err)
     }
 }
 
