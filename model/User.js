@@ -1,4 +1,3 @@
-const { type } = require('express/lib/response')
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
@@ -14,6 +13,11 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        enum: ['student', 'teacher', 'admin', 'superadmin'],
+        default: 'student'
     },
     resetPasswordToken: {
         type: String
