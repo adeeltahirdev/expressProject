@@ -13,6 +13,19 @@ const createTeacher = async (req, res, next) => {
     }
 }
 
+const getTeachers = async (req, res, next) => {
+    try {
+        const teachers = await teacherService.getTeachers()
+
+        res.status(200).json({
+            teachers
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
-    createTeacher
+    createTeacher,
+    getTeachers
 }

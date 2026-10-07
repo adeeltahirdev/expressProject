@@ -7,4 +7,6 @@ const router = express.Router()
 
 router.post('/', validate(createTeacherSchema), teacherController.createTeacher)
 
+router.get('/', teacherController.getTeachers)
+
 module.exports = router

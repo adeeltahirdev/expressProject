@@ -2,6 +2,7 @@ const Teacher = require('../model/Teacher')
 const User = require('../model/User')
 const Course = require('../model/Course')
 const AppError = require('../utils/AppError')
+const { get } = require('mongoose')
 
 const createTeacher = async (teacherData) => {
     const { user, course } = teacherData
@@ -35,6 +36,13 @@ const createTeacher = async (teacherData) => {
     return teacher
 }
 
+const getTeachers = async () => {
+    const teachers = await Teacher.find().populate('user', 'name email role').populate('course', 'courseCode courseName credits')
+
+    return teachers
+}
+
 module.exports = {
-    createTeacher
+    createTeacher,
+    getTeachers
 }
