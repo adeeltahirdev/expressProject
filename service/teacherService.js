@@ -76,9 +76,22 @@ const updateTeacher = async (teacherId, teacherData) => {
     return teacher
 }
 
+const deleteTeacher = async (teacherId) => {
+    const teacher = await Teacher.findById(teacherId)
+
+    if (!teacher) {
+        throw new AppError('Teacher not found', 404)
+    }
+
+    await teacher.deleteOne()
+
+    return teacher
+}
+
 module.exports = {
     createTeacher,
     getTeachers,
     getTeacherById,
-    updateTeacher
+    updateTeacher,
+    deleteTeacher
 }

@@ -50,9 +50,23 @@ const updateTeacher = async (req, res, next) => {
     }
 }
 
+const deleteTeacher = async (req, res, next) => {
+    try {
+        const teacher = await teacherService.deleteTeacher(req.params.teacherId)
+
+        res.status(200).json({
+            message: 'Teacher deleted successfully',
+            teacher
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createTeacher,
     getTeachers,
     getTeacherById,
-    updateTeacher
+    updateTeacher,
+    deleteTeacher
 }

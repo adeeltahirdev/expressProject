@@ -13,4 +13,6 @@ router.get('/:teacherId', teacherController.getTeacherById)
 
 router.patch('/:teacherId', validate(updateTeacherSchema), teacherController.updateTeacher)
 
+router.delete('/:teacherId', teacherController.deleteTeacher)
+
 module.exports = router
