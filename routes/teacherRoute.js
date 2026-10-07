@@ -9,4 +9,6 @@ router.post('/', validate(createTeacherSchema), teacherController.createTeacher)
 
 router.get('/', teacherController.getTeachers)
 
+router.get('/:teacherId', teacherController.getTeacherById)
+
 module.exports = router

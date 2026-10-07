@@ -25,7 +25,20 @@ const getTeachers = async (req, res, next) => {
     }
 }
 
+const getTeacherById = async (req, res, next) => {
+    try {
+        const teacher = await teacherService.getTeacherById(req.params.teacherId)
+
+        res.status(200).json({
+            teacher
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createTeacher,
-    getTeachers
+    getTeachers,
+    getTeacherById
 }

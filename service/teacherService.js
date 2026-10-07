@@ -42,7 +42,20 @@ const getTeachers = async () => {
     return teachers
 }
 
+const getTeacherById = async (teacherId) => {
+    const teacher = await Teacher.findById(teacherId)
+      .populate("user", "name email role")
+      .populate("course", "courseCode courseName credits")
+
+    if (!teacher) {
+        throw new AppError('Teacher not found', 404)
+    }
+
+    return teacher
+}
+
 module.exports = {
     createTeacher,
-    getTeachers
+    getTeachers,
+    getTeacherById
 }
