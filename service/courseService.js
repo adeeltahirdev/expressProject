@@ -31,8 +31,23 @@ const getCourseById = async (courseId) => {
     return course
 }
 
+const updateCourse = async (courseId, courseData) => {
+    const course = await Course.findById(courseId)
+    
+    if (!course) {
+        throw new AppError('Course not found', 404)
+    }
+
+    Object.assign(course, courseData)
+
+    await course.save()
+
+    return course
+}
+
 module.exports = {
     createCourse,
     getCourses,
-    getCourseById
+    getCourseById,
+    updateCourse
 }
