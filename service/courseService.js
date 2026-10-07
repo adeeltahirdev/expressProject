@@ -45,9 +45,23 @@ const updateCourse = async (courseId, courseData) => {
     return course
 }
 
+const deleteCourse = async (courseId) => {
+    const course = await Course.findById(courseId)
+
+    if (!course) {
+        throw new AppError('Course not found', 404);
+        
+    }
+
+    await course.deleteOne()
+
+    return course
+}
+
 module.exports = {
     createCourse,
     getCourses,
     getCourseById,
-    updateCourse
+    updateCourse,
+    deleteCourse
 }

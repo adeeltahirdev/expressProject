@@ -14,4 +14,6 @@ router.get('/:courseId', courseController.getCourseById)
 
 router.patch('/:courseId', validate(updateCourseSchema), courseController.updateCourse)
 
+router.delete('/:courseId', courseController.deleteCourse)
+
 module.exports = router
