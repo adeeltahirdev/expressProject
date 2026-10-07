@@ -16,7 +16,23 @@ const createTeacherSchema = joi.object({
   course: joi.string().hex().length(24).required()
 });
 
+const updateTeacherSchema = joi.object({
+
+  firstName: joi.string().trim(),
+
+  lastName: joi.string().trim(),
+
+  phone: joi.string().trim(),
+
+  qualification: joi.string().trim(),
+
+  hireDate: joi.date(),
+
+  course: joi.string().hex().length(24)
+}).min(1)
+
 
 module.exports = {
-    createTeacherSchema
+    createTeacherSchema,
+    updateTeacherSchema
 }

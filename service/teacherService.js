@@ -54,8 +54,31 @@ const getTeacherById = async (teacherId) => {
     return teacher
 }
 
+const updateTeacher = async (teacherId, teacherData) => {
+    const teacher = await Teacher.findById(teacherId)
+
+    if (!teacher) {
+        throw new AppError('teacher not found', 404)
+    }
+
+    if (teacherData.course) {
+        const existingCourse = await Course.findById(teacherData.course)
+
+        if (!existingCourse) {
+            throw new AppError('Course not found', 404)
+        }
+    }
+
+    Object.assign(teacher, teacherData)
+
+    await teacher.save()
+
+    return teacher
+}
+
 module.exports = {
     createTeacher,
     getTeachers,
-    getTeacherById
+    getTeacherById,
+    updateTeacher
 }
