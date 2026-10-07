@@ -8,4 +8,6 @@ const router = express.Router()
 
 router.post('/', validate(createCourseSchema), courseController.createCourse)
 
+router.get('/', courseController.getCourse)
+
 module.exports = router

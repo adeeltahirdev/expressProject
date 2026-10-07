@@ -15,6 +15,13 @@ const createCourse = async (courseData) => {
     return course
 }
 
+const getCourses = async () => {
+    const courses = await Course.find()
+
+    return courses
+}
+
 module.exports = {
-    createCourse
+    createCourse,
+    getCourses
 }
