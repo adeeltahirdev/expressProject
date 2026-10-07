@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const authRoute = require('./routes/authRoute')
 const courseRoute = require('./routes/courseRoute')
+const teacherRoute = require('./routes/teacherRoute')
 const connectDB = require('./config/db')
 const errorMiddleware = require('./middleware/errorMiddleware')
 
@@ -14,6 +15,7 @@ connectDB()
 // App's routes
 app.use('/auth', authRoute)
 app.use('/courses', courseRoute)
+app.use('/teachers', teacherRoute)
 
 // Error handling middleware
 app.use(errorMiddleware)
