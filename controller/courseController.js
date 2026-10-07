@@ -13,7 +13,7 @@ const createCourse = async (req, res, next) => {
     }
 }
 
-const getCourse = async (req, res, next) => {
+const getCourses = async (req, res, next) => {
     try {
         const courses = await courseService.getCourses()
 
@@ -25,7 +25,20 @@ const getCourse = async (req, res, next) => {
     }
 }
 
+const getCourseById = async (req, res, next) => {
+    try {
+        const course = await courseService.getCourseById(req.params.courseId)
+
+        res.status(200).json({
+            course
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createCourse,
-    getCourse
+    getCourses,
+    getCourseById
 }

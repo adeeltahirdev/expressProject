@@ -8,6 +8,8 @@ const router = express.Router()
 
 router.post('/', validate(createCourseSchema), courseController.createCourse)
 
-router.get('/', courseController.getCourse)
+router.get('/', courseController.getCourses)
+
+router.get('/:courseId', courseController.getCourseById)
 
 module.exports = router
