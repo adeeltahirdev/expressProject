@@ -1,7 +1,7 @@
 const joi = require('joi')
 
 const createTeacherSchema = joi.object({
-  user: joi.string().hex().length(24).required,
+  user: joi.string().hex().length(24).required(),
 
   firstName: joi.string().trim().required(),
 
@@ -13,7 +13,7 @@ const createTeacherSchema = joi.object({
 
   hireDate: joi.date().required(),
 
-  course: joi.string().hex().length(24).required
+  course: joi.string().hex().length(24).required()
 });
 
 

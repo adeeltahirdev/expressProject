@@ -24,7 +24,7 @@ const createTeacher = async (teacherData) => {
         throw new AppError('Teacher profile already exist', 409)
     }
 
-    const existingCourse = await Course.findOne(course)
+    const existingCourse = await Course.findById(course)
 
     if (!existingCourse) {
         throw new AppError('Course not found', 404)
