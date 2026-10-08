@@ -32,6 +32,25 @@ const createEnrollment = async (enrollmentData) => {
     return enrollment
 }
 
+const getEnrollments = async () => {
+    const enrollments = await Enrollment.find().populate('student', 'firstName lastName').populate('course', 'courseCode courseName')
+
+    return enrollments
+
+}
+
+const getEnrollmentById = async (enrollmentId) => {
+    const enrollment = await Enrollment.findById(enrollmentId).populate('student', 'firstName lastName').populate('course', 'courseCode courseName')
+
+    if (!enrollment) {
+        throw new AppError('Enrollment not found', 404)
+    }
+
+    return enrollment
+}
+
 module.exports = {
-    createEnrollment
+    createEnrollment,
+    getEnrollments,
+    getEnrollmentById
 }

@@ -5,7 +5,7 @@ const createEnrollment = async (req, res, next) => {
         const enrollment = await enrollmentService.createEnrollment(req.body)
 
         res.status(201).json({
-            message: 'Student Enrolled seccussfully',
+            message: 'Student enrolled seccussfully',
             enrollment
         })
     } catch (err) {
@@ -13,6 +13,28 @@ const createEnrollment = async (req, res, next) => {
     }
 }
 
+const getEnrollments = async (req, res, next) => {
+    try {
+        const enrollments = await enrollmentService.getEnrollments();
+
+        res.status(200).json({
+          enrollments,
+        });
+    } catch (err) {
+        next(err)
+    }
+}
+
+const getEnrollmentById = async (req, res, next) => {
+    const enrollment = await enrollmentService.getEnrollmentById(req.params.enrollmentId)
+
+    res.status(200).json({
+        enrollment
+    })
+}
+
 module.exports = {
-    createEnrollment
+    createEnrollment,
+    getEnrollments,
+    getEnrollmentById
 }

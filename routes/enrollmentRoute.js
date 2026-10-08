@@ -7,4 +7,8 @@ const router = express.Router()
 
 router.post('/', validate(createEnrollmentSchema), enrollmentController.createEnrollment)
 
+router.get('/', enrollmentController.getEnrollments)
+
+router.get('/:enrollmentId', enrollmentController.getEnrollmentById)
+
 module.exports = router
