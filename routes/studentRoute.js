@@ -11,4 +11,8 @@ router.get('/', studentController.getStudents)
 
 router.get('/:studentId', studentController.getStudentById)
 
+router.patch('/:studentId', validate(updateStudentSchema), studentController.updateStudent)
+
+router.delete('/:studentId', studentController.deleteStudent)
+
 module.exports = router

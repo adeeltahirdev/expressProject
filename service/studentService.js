@@ -42,8 +42,36 @@ const getStudentById = async (studentId) => {
     return student
 }
 
+const updateStudent = async (studentId, studentData) => {
+    const student = await Student.findById(studentId)
+
+    if (!student) {
+        throw new AppError('Student not found', 404)
+    }
+
+    Object.assign(student, studentData)
+
+    await student.save()
+
+    return student
+}
+
+const deleteStudent = async (studentId) => {
+    const student = await Student.findById(studentId)
+
+    if (!student) {
+        throw new AppError('Student not found', 404)
+    }
+
+    await student.deleteOne()
+
+    return student
+}
+
 module.exports = {
     createStudent,
     getStudents,
-    getStudentById
+    getStudentById,
+    updateStudent,
+    deleteStudent
 }
