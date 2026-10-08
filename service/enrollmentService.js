@@ -49,8 +49,25 @@ const getEnrollmentById = async (enrollmentId) => {
     return enrollment
 }
 
+const updateEnrollment = async (enrollmentId, enrollmentData) => {
+    const enrollment = await Enrollment.findById(enrollmentId)
+      .populate("student", "firstName lastName")
+      .populate("course", "courseCode courseName");
+
+    if (!enrollment) {
+        throw new AppError('Enrollment not found', 404)
+    }
+
+    Object.assign(enrollment, enrollmentData)
+
+    await enrollment.save()
+
+    return enrollment
+}
+
 module.exports = {
     createEnrollment,
     getEnrollments,
-    getEnrollmentById
+    getEnrollmentById,
+    updateEnrollment
 }

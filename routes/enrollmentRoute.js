@@ -11,4 +11,6 @@ router.get('/', enrollmentController.getEnrollments)
 
 router.get('/:enrollmentId', enrollmentController.getEnrollmentById)
 
+router.patch('/:enrollmentId', validate(updateEnrollmentSchema), enrollmentController.updateEnrollment)
+
 module.exports = router

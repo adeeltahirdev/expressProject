@@ -26,15 +26,35 @@ const getEnrollments = async (req, res, next) => {
 }
 
 const getEnrollmentById = async (req, res, next) => {
-    const enrollment = await enrollmentService.getEnrollmentById(req.params.enrollmentId)
+    try {
+        const enrollment = await enrollmentService.getEnrollmentById(
+          req.params.enrollmentId,
+        );
 
-    res.status(200).json({
-        enrollment
-    })
+        res.status(200).json({
+          enrollment,
+        });
+    } catch (err) {
+        next(err)
+    }
+}
+
+const updateEnrollment = async (req, res, next) => {
+    try {
+        const enrollment = await enrollmentService.updateEnrollment(req.params.enrollmentId, req.body)
+
+        res.status(200).json({
+            message: 'Enrollment updated successfully',
+            enrollment
+        })
+    } catch (err) {
+        next(err)
+    }
 }
 
 module.exports = {
     createEnrollment,
     getEnrollments,
-    getEnrollmentById
+    getEnrollmentById,
+    updateEnrollment
 }
