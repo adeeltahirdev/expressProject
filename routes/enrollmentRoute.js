@@ -13,4 +13,6 @@ router.get('/:enrollmentId', enrollmentController.getEnrollmentById)
 
 router.patch('/:enrollmentId', validate(updateEnrollmentSchema), enrollmentController.updateEnrollment)
 
+router.delete('/:enrollmentId', enrollmentController.deleteEnrollment)
+
 module.exports = router

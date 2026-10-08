@@ -52,9 +52,23 @@ const updateEnrollment = async (req, res, next) => {
     }
 }
 
+const deleteEnrollment = async (req, res, next) => {
+    try {
+        const enrollment = await enrollmentService.deleteEnrollment(req.params.enrollmentId)
+
+        res.status(200).json({
+            message: 'Enrollment deleted successfully',
+            enrollment
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createEnrollment,
     getEnrollments,
     getEnrollmentById,
-    updateEnrollment
+    updateEnrollment,
+    deleteEnrollment
 }

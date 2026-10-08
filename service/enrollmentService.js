@@ -65,9 +65,22 @@ const updateEnrollment = async (enrollmentId, enrollmentData) => {
     return enrollment
 }
 
+const deleteEnrollment = async (enrollmentId) => {
+    const enrollment = await Enrollment.findById(enrollmentId)
+
+    if (!enrollment) {
+        throw new AppError('Enrollment not found', 404)
+    }
+
+    await enrollment.deleteOne()
+
+    return enrollment
+}
+
 module.exports = {
     createEnrollment,
     getEnrollments,
     getEnrollmentById,
-    updateEnrollment
+    updateEnrollment,
+    deleteEnrollment
 }
