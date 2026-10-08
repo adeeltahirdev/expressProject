@@ -1,4 +1,5 @@
 const Course = require('../model/Course')
+const Teacher = require('../model/Teacher')
 const AppError = require('../utils/AppError')
 
 const createCourse = async (courseData) => {
@@ -51,6 +52,14 @@ const deleteCourse = async (courseId) => {
     if (!course) {
         throw new AppError('Course not found', 404);
         
+    }
+
+    const assignedTeacher = await Teacher.findOne({
+        course: courseId
+    })
+
+    if (assignedTeacher) {
+        throw new AppError('Cannot delete course because teachers are assigned to it', 409)
     }
 
     await course.deleteOne()
