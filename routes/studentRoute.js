@@ -7,4 +7,8 @@ const router = express.Router()
 
 router.post('/', validate(createStudentSchema), studentController.createStudent)
 
+router.get('/', studentController.getStudents)
+
+router.get('/:studentId', studentController.getStudentById)
+
 module.exports = router

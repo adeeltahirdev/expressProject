@@ -26,6 +26,24 @@ const createStudent = async (studentData) => {
     return student
 }
 
+const getStudents = async () => {
+    const students = await Student.find().populate('user', 'name email role')
+
+    return students
+}
+
+const getStudentById = async (studentId) => {
+    const student = await Student.findById(studentId).populate('user', 'name email role')
+
+    if (!student) {
+        throw new AppError('Student not found', 404)
+    }
+
+    return student
+}
+
 module.exports = {
-    createStudent
+    createStudent,
+    getStudents,
+    getStudentById
 }
