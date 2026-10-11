@@ -7,6 +7,7 @@ const teacherRoute = require('./routes/teacherRoute')
 const studentRoute = require('./routes/studentRoute')
 const enrollmentRoute = require('./routes/enrollmentRoute')
 const gradeRoute = require('./routes/gradeRoute')
+const attendanceRoute = require('./routes/attendanceRoute')
 const connectDB = require('./config/db')
 const errorMiddleware = require('./middleware/errorMiddleware')
 
@@ -22,6 +23,7 @@ app.use('/teachers', teacherRoute)
 app.use('/students', studentRoute)
 app.use('/enrollments', enrollmentRoute)
 app.use('/grades', gradeRoute)
+app.use('/attendances', attendanceRoute)
 
 // Error handling middleware
 app.use(errorMiddleware)
