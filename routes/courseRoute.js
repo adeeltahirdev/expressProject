@@ -1,19 +1,21 @@
 const express = require('express')
 const courseController = require('../controller/courseController')
 const validate = require('../middleware/validationMiddleware')
+const authMiddleware = require('../middleware/authMiddleware')
+const checkRoles = require('../middleware/roleMiddleware')
 const { createCourseSchema, updateCourseSchema } = require("../validation/courseValidation");
 
 
 const router = express.Router()
 
-router.post('/', validate(createCourseSchema), courseController.createCourse)
+router.post('/', authMiddleware, checkRoles('admin', 'superadmin'), validate(createCourseSchema), courseController.createCourse)
 
-router.get('/', courseController.getCourses)
+router.get('/', authMiddleware, courseController.getCourses)
 
-router.get('/:courseId', courseController.getCourseById)
+router.get('/:courseId', authMiddleware, courseController.getCourseById)
 
-router.patch('/:courseId', validate(updateCourseSchema), courseController.updateCourse)
+router.patch('/:courseId', authMiddleware, checkRoles('admin', 'superadmin'), validate(updateCourseSchema), courseController.updateCourse)
 
-router.delete('/:courseId', courseController.deleteCourse)
+router.delete('/:courseId', authMiddleware, checkRoles('admin', 'superadmin'), courseController.deleteCourse)
 
 module.exports = router

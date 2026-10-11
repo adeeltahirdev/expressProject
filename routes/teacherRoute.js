@@ -1,18 +1,20 @@
 const express = require('express')
 const teacherController = require('../controller/teacherController')
 const validate = require('../middleware/validationMiddleware')
+const authMiddleware = require('../middleware/authMiddleware')
+const checkRoles = require('../middleware/roleMiddleware')
 const {createTeacherSchema, updateTeacherSchema} = require('../validation/teacherValidation')
 
 const router = express.Router()
 
-router.post('/', validate(createTeacherSchema), teacherController.createTeacher)
+router.post('/', authMiddleware, checkRoles('admin', 'superadmin'), validate(createTeacherSchema), teacherController.createTeacher)
 
-router.get('/', teacherController.getTeachers)
+router.get('/', authMiddleware, teacherController.getTeachers)
 
-router.get('/:teacherId', teacherController.getTeacherById)
+router.get('/:teacherId', authMiddleware, teacherController.getTeacherById)
 
-router.patch('/:teacherId', validate(updateTeacherSchema), teacherController.updateTeacher)
+router.patch('/:teacherId', authMiddleware, checkRoles('admin', 'superadmin'), validate(updateTeacherSchema), teacherController.updateTeacher)
 
-router.delete('/:teacherId', teacherController.deleteTeacher)
+router.delete('/:teacherId', authMiddleware, checkRoles('admin', 'superadmin'), teacherController.deleteTeacher)
 
 module.exports = router
