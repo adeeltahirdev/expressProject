@@ -46,23 +46,63 @@ const getAttendanceById = async (attendanceId) => {
     return attendance
 }
 
-const updateAttendance = async (attendanceId, attendanceData) => {
+const updateAttendance = async (attendanceId, attendanceData, user) => {
     const attendance = await Attendance.findById(attendanceId)
 
     if (!attendance) {
         throw new AppError('Attendance not found', 404)
     }
 
-    const updateData = { ...attendanceData };
+    if (user.role === 'teacher') {
+        const teacher = await Teacher.findOne({ user: user.id })
 
-    if (updateData.date) {
-        const normalizedDate = new Date(updateData.date);
-        normalizedDate.setUTCHours(0, 0, 0, 0);
-        updateData.date = normalizedDate;
+        if (!teacher) {
+            throw new AppError('Teacher profile not found', 404)
+        }
+
+        const enrollment = await Enrollment.findById(attendance.enrollment)
+
+        if (!enrollment) {
+            throw new AppError('Enrollment not found', 404)
+        }
+
+        if (enrollment.course.toString() !== teacher.course.toString()) {
+            throw new AppError(
+                'You can only update attendance for your assigned course',
+                403
+            )
+        }
     }
 
-    Object.assign(attendance, updateData);
+    const updateData = {}
 
+    if (attendanceData.date !== undefined) {
+        const normalizedDate = new Date(attendanceData.date)
+        normalizedDate.setUTCHours(0, 0, 0, 0)
+        updateData.date = normalizedDate
+    }
+
+    if (attendanceData.status !== undefined) {
+        updateData.status = attendanceData.status
+    }
+
+    const enrollmentId = attendance.enrollment
+    const attendanceDate = updateData.date ?? attendance.date
+
+    const conflictingAttendance = await Attendance.findOne({
+        _id: { $ne: attendance._id },
+        enrollment: enrollmentId,
+        date: attendanceDate
+    })
+
+    if (conflictingAttendance) {
+        throw new AppError(
+            'Attendance has already been marked for this enrollment and date',
+            409
+        )
+    }
+
+    Object.assign(attendance, updateData)
     await attendance.save()
 
     return attendance

@@ -13,7 +13,7 @@ router.get('/', authMiddleware, checkRoles('admin', 'superadmin'), attendanceCon
 
 router.get('/:attendanceId', authMiddleware, checkRoles('admin', 'superadmin'), attendanceController.getAttendanceById)
 
-router.patch('/:attendanceId', authMiddleware, checkRoles('admin', 'superadmin'), validate(updateAttendanceSchema), attendanceController.updateAttendance)
+router.patch('/:attendanceId', authMiddleware, checkRoles('teacher', 'admin', 'superadmin'), validate(updateAttendanceSchema), attendanceController.updateAttendance)
 
 router.delete('/:attendanceId', authMiddleware, checkRoles('admin', 'superadmin'), attendanceController.deleteAttendance)
 

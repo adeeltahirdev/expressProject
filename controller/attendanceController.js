@@ -39,7 +39,7 @@ const getAttendanceById = async (req, res, next) => {
 
 const updateAttendance = async (req, res, next) => {
   try {
-    const attendance = await attendanceService.updateAttendance(req.params.attendanceId, req.body)
+    const attendance = await attendanceService.updateAttendance(req.params.attendanceId, req.body, req.user)
 
     res.status(200).json({
         message: 'Attendance updated successfully',
