@@ -23,6 +23,12 @@ const gradeSchema = new mongoose.Schema({
     remarks: {
         type: String,
         trim: true
+    },
+
+    assignedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Teacher',
+        required: true
     }
 })
 

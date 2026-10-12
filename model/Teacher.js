@@ -25,7 +25,7 @@ const teacherSchema = new mongoose.Schema({
     qualification: {
         type: String,
         required: true,
-        trime: true
+        trim: true
     },
     hireDate: {
         type: Date,
