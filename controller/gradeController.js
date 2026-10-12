@@ -2,7 +2,7 @@ const gradeService = require('../service/gradeService')
 
 const createGrade = async (req, res, next) => {
     try {
-        const grade = await gradeService.createGrade(req.body)
+        const grade = await gradeService.createGrade(req.body, req.user)
 
         res.status(201).json({
             message: 'Grade added successfully',
@@ -39,7 +39,7 @@ const getGradeById = async (req, res, next) => {
 
 const updateGrade = async (req, res, next) => {
     try {
-        const grade = await gradeService.updateGrade(req.params.gradeId, req.body)
+        const grade = await gradeService.updateGrade(req.params.gradeId, req.body, req.user)
 
         res.status(200).json({
             message: 'Grade updated successfully',

@@ -4,7 +4,7 @@ const Teacher = require('../model/Teacher')
 const AppError = require('../utils/AppError')
 const Course = require('../model/Course')
 
-const createGrade = async (gradeData) => {
+const createGrade = async (gradeData, user) => {
     const { enrollment } = gradeData
 
     const existingEnrollment = await Enrollment.findById(enrollment)
@@ -13,22 +13,29 @@ const createGrade = async (gradeData) => {
         throw new AppError('Enrollment not found', 404)
     }
 
-    const assignedTeacher = await Teacher.findOne({
-        _id: gradeData.assignedBy,
-        course: existingEnrollment.course
-    })
+    const teacher = await Teacher.findOne({ user: user.id })
 
-    if (!assignedTeacher) {
-        throw new AppError('Teacher is not assigned to this course', 403)
+    if (!teacher) {
+        throw new AppError('Teacher profile not found', 404)
+    }
+
+    if (teacher.course.toString() !== existingEnrollment.course.toString()) {
+        throw new AppError(
+            'You can only grade students enrolled in your assigned course',
+            403
+        )
     }
 
     const existingGrade = await Grade.findOne({ enrollment })
 
     if (existingGrade) {
-        throw new AppError('Grade already exist for this enrollment', 409)
+        throw new AppError('Grade already exists for this enrollment', 409)
     }
 
-    const grade = await Grade.create(gradeData)
+    const grade = await Grade.create({
+        ...gradeData,
+        assignedBy: teacher._id
+    })
 
     return grade
 }
@@ -83,14 +90,45 @@ const getGradeById = async (gradeId) => {
     return grade
 }
 
-const updateGrade = async (gradeId, gradeData) => {
+const updateGrade = async (gradeId, gradeData, user) => {
     const grade = await Grade.findById(gradeId)
 
     if (!grade) {
         throw new AppError('Grade not found', 404)
     }
 
-    Object.assign(grade, gradeData)
+    if (user.role === 'teacher') {
+        const teacher = await Teacher.findOne({ user: user.id })
+
+        if (!teacher) {
+            throw new AppError('Teacher profile not found', 404)
+        }
+
+        const enrollment = await Enrollment.findById(grade.enrollment)
+
+        if (!enrollment) {
+            throw new AppError('Enrollment not found', 404)
+        }
+
+        if (teacher.course.toString() !== enrollment.course.toString()) {
+            throw new AppError(
+                'You can only update grades for your assigned course',
+                403
+            )
+        }
+    }
+
+    if (gradeData.marks !== undefined) {
+        grade.marks = gradeData.marks
+    }
+
+    if (gradeData.grade !== undefined) {
+        grade.grade = gradeData.grade
+    }
+
+    if (gradeData.remarks !== undefined) {
+        grade.remarks = gradeData.remarks
+    }
 
     await grade.save()
 
