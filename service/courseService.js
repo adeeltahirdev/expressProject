@@ -1,5 +1,6 @@
 const Course = require('../model/Course')
 const Teacher = require('../model/Teacher')
+const Enrollment = require('../model/Enrollment')
 const AppError = require('../utils/AppError')
 
 const createCourse = async (courseData) => {
@@ -67,10 +68,28 @@ const deleteCourse = async (courseId) => {
     return course
 }
 
+const getTeachersByCourse = async (courseId) => {
+    await getCourseById(courseId)
+
+    const teachers = await Teacher.find({ course: courseId })
+
+    return teachers
+}
+
+const getStudentsByCourse = async (courseId) => {
+    await getCourseById(courseId)
+
+    const enrollments = await Enrollment.find({ course: courseId }).populate('student', 'firstName lastName')
+
+    return enrollments
+}
+
 module.exports = {
     createCourse,
     getCourses,
     getCourseById,
     updateCourse,
-    deleteCourse
+    deleteCourse,
+    getTeachersByCourse,
+    getStudentsByCourse
 }

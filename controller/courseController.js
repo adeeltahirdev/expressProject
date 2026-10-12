@@ -63,10 +63,36 @@ const deleteCourse = async (req, res, next) => {
     }
 }
 
+const getTeachersByCourse = async (req, res, next) => {
+    try {
+        const teachers = await courseService.getTeachersByCourse(req.params.courseId)
+
+        res.status(200).json({
+            teachers
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+const getStudentsByCourse = async (req, res, next) => {
+    try {
+        const enrollments = await courseService.getStudentsByCourse(req.params.courseId)
+
+        res.status(200).json({
+            enrollments
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createCourse,
     getCourses,
     getCourseById,
     updateCourse,
-    deleteCourse
+    deleteCourse,
+    getTeachersByCourse,
+    getStudentsByCourse
 }

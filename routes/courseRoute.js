@@ -14,6 +14,10 @@ router.get('/', authMiddleware, courseController.getCourses)
 
 router.get('/:courseId', authMiddleware, courseController.getCourseById)
 
+router.get('/:courseId/teachers', authMiddleware, checkRoles('admin', 'superadmin'), courseController.getTeachersByCourse)
+
+router.get('/:courseId/students', authMiddleware, checkRoles('admin', 'superadmin'), courseController.getStudentsByCourse)
+
 router.patch('/:courseId', authMiddleware, checkRoles('admin', 'superadmin'), validate(updateCourseSchema), courseController.updateCourse)
 
 router.delete('/:courseId', authMiddleware, checkRoles('admin', 'superadmin'), courseController.deleteCourse)
