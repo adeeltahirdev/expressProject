@@ -84,6 +84,24 @@ const getStudentsByCourse = async (courseId) => {
     return enrollments
 }
 
+const getCourseMembers = async (courseId) => {
+    const course = await getCourseById(courseId)
+    const [teachers, enrollments] = await Promise.all([
+        getTeachersByCourse(courseId),
+        getStudentsByCourse(courseId)
+    ])
+
+    return {
+        course: {
+            _id: course._id,
+            courseCode: course.courseCode,
+            courseName: course.courseName
+        },
+        teachers,
+        students: enrollments
+    }
+}
+
 module.exports = {
     createCourse,
     getCourses,
@@ -91,5 +109,6 @@ module.exports = {
     updateCourse,
     deleteCourse,
     getTeachersByCourse,
-    getStudentsByCourse
+    getStudentsByCourse,
+    getCourseMembers
 }

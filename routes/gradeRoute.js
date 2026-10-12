@@ -11,7 +11,7 @@ router.post('/', authMiddleware, checkRoles('admin', 'superadmin'), validate(cre
 
 router.get('/', authMiddleware, checkRoles('admin', 'superadmin'), gradeController.getGrades)
 
-router.get('/:gradeId', authMiddleware, checkRoles('admin', 'superadmin'), gradeController.getGradeById)
+router.get('/:gradeId', authMiddleware, gradeController.getGradeById)
 
 router.patch('/:gradeId', authMiddleware, checkRoles('admin', 'superadmin'), validate(updateGradeSchema), gradeController.updateGrade)
 

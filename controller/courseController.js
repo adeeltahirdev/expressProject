@@ -87,6 +87,18 @@ const getStudentsByCourse = async (req, res, next) => {
     }
 }
 
+const getCourseMembers = async (req, res, next) => {
+    try {
+        const members = await courseService.getCourseMembers(req.params.courseId)
+
+        res.status(200).json({
+            members
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createCourse,
     getCourses,
@@ -94,5 +106,6 @@ module.exports = {
     updateCourse,
     deleteCourse,
     getTeachersByCourse,
-    getStudentsByCourse
+    getStudentsByCourse,
+    getCourseMembers
 }

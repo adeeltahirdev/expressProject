@@ -63,10 +63,23 @@ const deleteGrade = async (req, res, next) => {
     }
 }
 
+const getGradesByCourse = async (req, res, next) => {
+    try {
+        const grades = await gradeService.getGradesByCourse(req.params.courseId)
+
+        res.status(200).json({
+            grades
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     createGrade,
     getGrades,
     getGradeById,
     updateGrade,
-    deleteGrade
+    deleteGrade,
+    getGradesByCourse
 }
