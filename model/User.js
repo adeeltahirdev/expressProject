@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
         enum: ['student', 'teacher', 'admin', 'superadmin'],
         default: 'student'
     },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     resetPasswordToken: {
         type: String
     },

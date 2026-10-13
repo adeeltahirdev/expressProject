@@ -62,10 +62,24 @@ const getUserById = async (req, res, next) => {
     }
 }
 
+const softDeleteUser = async (req, res, next) => {
+    try {
+        const user = await adminService.softDeleteUser(req.params.userId)
+
+        res.status(200).json({
+            message: 'User deactivated successfully',
+            user
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     getDashboardStats,
     getUsersListing,
     createAdmin,
     updateUserRole,
-    getUserById
+    getUserById,
+    softDeleteUser
 }

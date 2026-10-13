@@ -45,6 +45,10 @@ const loginUSer = async (userData) => {
         throw new AppError('Invalid email or password', 401)
     }
 
+    if (!user.isActive) {
+        throw new AppError('Your account has been deactivated', 403)
+    }
+
     const token = jwt.sign(
         {
             id: user._id,

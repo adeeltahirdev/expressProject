@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
+const User = require('../model/User')
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
 
     const authHeader = req.headers.authorization
 
@@ -12,18 +13,35 @@ const authMiddleware = (req, res, next) => {
 
     const token = authHeader.split(' ')[1]
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+let decoded
 
-        req.user = decoded
-        next()
-    }
-    catch (err)  {
-        console.log('JWT ERROR: ', err.message)
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET)
+    } catch (err) {
         return res.status(401).json({
             message: 'Invalid or expired token'
         })
     }
+
+    try {
+        const user = await User.findById(decoded.id)
+
+        if (!user || !user.isActive) {
+            return res.status(401).json({
+                message: 'Account is unavailable'
+            })
+        }
+        req.user = {
+            id: user._id,
+            email: user.email,
+            role: user.role
+        }
+
+        next()
+    } catch (err) {
+        next(err)
+    }
 }
+
 
 module.exports = authMiddleware

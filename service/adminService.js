@@ -97,10 +97,31 @@ const getUserById = async (userId) => {
     }
 }
 
+const softDeleteUser = async (userId) => {
+    const user = await User.findById(userId)
+
+    if (!user) {
+        throw new AppError('User not found', 404)
+    }
+
+    user.isActive = false
+
+    await user.save()
+
+    return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive
+    }
+}
+
 module.exports = {
     getDashboardStats,
     getUsersListing,
     createAdmin,
     updateUserRole,
-    getUserById
+    getUserById,
+    softDeleteUser
 }

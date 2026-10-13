@@ -17,4 +17,6 @@ router.post('/users', authMiddleware, checkRoles('superadmin'), validation(creat
 
 router.patch('/users/:userId/role', authMiddleware, checkRoles('superadmin'), validation(updateUserRoleSchema), adminController.updateUserRole)
 
+router.delete('/users/:userId', authMiddleware, checkRoles('superadmin'), adminController.softDeleteUser)
+
 module.exports = router
