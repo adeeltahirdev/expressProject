@@ -37,8 +37,22 @@ const createAdmin = async (req, res, next) => {
     }
 }
 
+const updateUserRole = async (req, res, next) => {
+    try {
+        const user = await adminService.updateUserRole(req.params.userId, req.body.role)
+
+        res.status(200).json({
+            message: 'Role updated successfully',
+            user
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     getDashboardStats,
     getUsersListing,
-    createAdmin
+    createAdmin,
+    updateUserRole
 }

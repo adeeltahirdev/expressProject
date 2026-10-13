@@ -63,8 +63,28 @@ const createAdmin = async (adminData) => {
     }
 }
 
+const updateUserRole = async (userId, role) => {
+    const user = await User.findById(userId)
+
+    if (!user) {
+        throw new AppError('User not found', 404)
+    }
+
+    user.role = role
+
+    await user.save()
+
+    return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+    }
+}
+
 module.exports = {
     getDashboardStats,
     getUsersListing,
-    createAdmin
+    createAdmin,
+    updateUserRole
 }
