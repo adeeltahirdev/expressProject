@@ -12,6 +12,33 @@ const getDashboardStats = async (req, res, next) => {
     }
 }
 
+const getUsersListing = async (req, res, next) => {
+    try {
+        const users = await adminService.getUsersListing()
+
+        res.status(200).json({
+            users
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+const createAdmin = async (req, res, next) => {
+    try {
+        const userAdmin = await adminService.createAdmin(req.body)
+
+        res.status(201).json({
+            message: 'Admin created successfully',
+            userAdmin
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
-    getDashboardStats
+    getDashboardStats,
+    getUsersListing,
+    createAdmin
 }

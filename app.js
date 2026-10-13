@@ -25,7 +25,7 @@ app.use('/students', studentRoute)
 app.use('/enrollments', enrollmentRoute)
 app.use('/grades', gradeRoute)
 app.use('/attendances', attendanceRoute)
-app.use('/dashboard', adminRoute)
+app.use('/admin', adminRoute)
 
 // Error handling middleware
 app.use(errorMiddleware)
