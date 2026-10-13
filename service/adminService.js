@@ -82,9 +82,25 @@ const updateUserRole = async (userId, role) => {
     }
 }
 
+const getUserById = async (userId) => {
+    const user = await User.findById(userId).select('-password -resetPasswordToken -resetPasswordExpires')
+
+    if (!user) {
+        throw new AppError('User not found', 404)
+    }
+
+    return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+    }
+}
+
 module.exports = {
     getDashboardStats,
     getUsersListing,
     createAdmin,
-    updateUserRole
+    updateUserRole,
+    getUserById
 }

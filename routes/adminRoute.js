@@ -11,6 +11,8 @@ router.get('/dashboard', authMiddleware, checkRoles('admin', 'superadmin'), admi
 
 router.get('/users', authMiddleware, checkRoles('admin', 'superadmin'), adminController.getUsersListing)
 
+router.get('/users/:userId', authMiddleware, checkRoles('admin', 'superadmin'), adminController.getUserById)
+
 router.post('/users', authMiddleware, checkRoles('superadmin'), validation(createAdminSchema), adminController.createAdmin)
 
 router.patch('/users/:userId/role', authMiddleware, checkRoles('superadmin'), validation(updateUserRoleSchema), adminController.updateUserRole)
