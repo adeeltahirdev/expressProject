@@ -63,9 +63,23 @@ const deleteStudent = async (studentId) => {
         throw new AppError('Student not found', 404)
     }
 
-    await student.deleteOne()
+    const user = await User.findById(student.user)
 
-    return student
+    if (!user) {
+        throw new AppError('Associated user not found', 404)
+    }
+
+    user.isActive = false
+
+    await user.save()
+
+    return {
+        studentId: student._id,
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        isActive: user.isActive
+    }
 }
 
 module.exports = {

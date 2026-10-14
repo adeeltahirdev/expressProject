@@ -8,7 +8,7 @@ const studentOwnershipMiddleware = require('../middleware/studentOwnershipMiddle
 
 const router = express.Router()
 
-router.post('/', authMiddleware, checkRoles('admin', 'superadmin'), validate(createStudentSchema), studentController.createStudent)
+router.post('/', authMiddleware, checkRoles('superadmin'), validate(createStudentSchema), studentController.createStudent)
 
 router.get('/', authMiddleware, checkRoles('admin', 'superadmin'), studentController.getStudents)
 
@@ -20,8 +20,8 @@ router.get('/me', authMiddleware, checkRoles('student'), studentOwnershipMiddlew
 
 router.get('/:studentId', authMiddleware, checkRoles('admin', 'superadmin'), studentController.getStudentById)
 
-router.patch('/:studentId', authMiddleware, checkRoles('admin', 'superadmin'), validate(updateStudentSchema), studentController.updateStudent)
+router.patch('/:studentId', authMiddleware, checkRoles('superadmin'), validate(updateStudentSchema), studentController.updateStudent)
 
-router.delete('/:studentId', authMiddleware, checkRoles('admin', 'superadmin'), studentController.deleteStudent)
+router.delete('/:studentId', authMiddleware, checkRoles('superadmin'), studentController.deleteStudent)
 
 module.exports = router
