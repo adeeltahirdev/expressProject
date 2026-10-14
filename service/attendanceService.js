@@ -1,8 +1,9 @@
 const Attendance = require('../model/Attendance')
 const Enrollment = require('../model/Enrollment')
+const Teacher = require('../model/Teacher')
 const AppError = require('../utils/AppError')
 
-const createAttendance = async (attendanceData) => {
+const createAttendance = async (attendanceData, user) => {
     const {enrollment} = attendanceData
     const normalizeDate = new Date(attendanceData.date)
     normalizeDate.setUTCHours(0, 0, 0, 0)
@@ -11,6 +12,18 @@ const createAttendance = async (attendanceData) => {
 
     if (!existingEnrollment) {
         throw new AppError('Enrollment not found', 404)
+    }
+
+    if (user.role === 'teacher') {
+        const teacher = await Teacher.findOne({ user: user.id })
+
+        if (!teacher) {
+            throw new AppError('Teacher profile not found', 404)
+        }
+
+        if (teacher.course.toString() !== existingEnrollment.course.toString()) {
+            throw new AppError('You can only mark attendance for your assigned course', 403)
+        }
     }
 
     const existingAttendance = await Attendance.findOne({
@@ -30,19 +43,58 @@ const createAttendance = async (attendanceData) => {
     return attendance
 }
 
-const getAttendances = async () => {
-    const attendances = await Attendance.find()
+const getAttendances = async (user) => {
 
-    return attendances
+    if (user.role === 'teacher') {
+
+        const teacher = await Teacher.findOne({ user: user.id })
+
+        if (!teacher) {
+            throw new AppError('Teacher profile not found', 404)
+        }
+
+        const enrollments = await Enrollment.find({
+            course: teacher.course
+        }).select('_id')
+
+        const enrollmentIds = enrollments.map(enrollment => enrollment._id)
+
+        return Attendance.find({
+            enrollment: { $in: enrollmentIds }
+        })
+    }
+
+    return Attendance.find()
 }
 
-const getAttendanceById = async (attendanceId) => {
+const getAttendanceById = async (attendanceId, user) => {
     const attendance = await Attendance.findById(attendanceId)
 
     if (!attendance) {
         throw new AppError('Attendance not found', 404)
     }
 
+    if (user.role === 'teacher') {
+    const teacher = await Teacher.findOne({ user: user.id })
+
+    if (!teacher) {
+        throw new AppError('Teacher profile not found', 404)
+    }
+
+    const enrollment = await Enrollment.findById(attendance.enrollment)
+
+    if (!enrollment) {
+        throw new AppError('Enrollment not found', 404)
+    }
+
+    if (enrollment.course.toString() !== teacher.course.toString()) {
+        throw new AppError(
+            'You can only view attendance for your assigned course',
+            403
+        )
+    }
+}
+ 
     return attendance
 }
 
@@ -108,11 +160,33 @@ const updateAttendance = async (attendanceId, attendanceData, user) => {
     return attendance
 }
 
-const deleteAttendance = async (attendanceId) => {
+const deleteAttendance = async (attendanceId, user) => {
     const attendance = await Attendance.findById(attendanceId)
 
     if (!attendance) {
         throw new AppError('Attendance not found', 404)
+    }
+
+    if (user.role === 'teacher') {
+        const teacher = await Teacher.findOne({ user: user.id })
+
+        if (!teacher) {
+            throw new AppError('Teacher profile not found', 404)
+        }
+
+        const enrollment = await Enrollment.findById(attendance.enrollment)
+
+        if (!enrollment) {
+            throw new AppError('Enrollment not found', 404)
+        }
+
+        if (enrollment.course.toString() !== teacher.course.toString()) {
+            throw new AppError(
+                'You can only delete attendance for your assigned course',
+                403
+            )
+        }
+
     }
 
     await attendance.deleteOne()

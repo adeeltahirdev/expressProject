@@ -2,7 +2,7 @@ const attendanceService = require("../service/attendanceService");
 
 const createAttendance = async (req, res, next) => {
   try {
-    const attendance = await attendanceService.createAttendance(req.body)
+    const attendance = await attendanceService.createAttendance(req.body, req.user)
 
     res.status(201).json({
         message: 'Attendance marked successfully',
@@ -15,7 +15,7 @@ const createAttendance = async (req, res, next) => {
 
 const getAttendances = async (req, res, next) => {
   try {
-    const attendances = await attendanceService.getAttendances()
+    const attendances = await attendanceService.getAttendances(req.user)
 
     res.status(200).json({
         attendances
@@ -27,7 +27,7 @@ const getAttendances = async (req, res, next) => {
 
 const getAttendanceById = async (req, res, next) => {
   try {
-    const attendance = await attendanceService.getAttendanceById(req.params.attendanceId)
+    const attendance = await attendanceService.getAttendanceById(req.params.attendanceId, req.user)
 
     res.status(200).json({
         attendance
@@ -52,7 +52,7 @@ const updateAttendance = async (req, res, next) => {
 
 const deleteAttendance = async (req, res, next) => {
   try {
-    const attendance = await attendanceService.deleteAttendance(req.params.attendanceId)
+    const attendance = await attendanceService.deleteAttendance(req.params.attendanceId, req.user)
 
     res.status(200).json({
         message: 'Attendance deleted successfully',
