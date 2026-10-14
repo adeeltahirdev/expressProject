@@ -2,7 +2,6 @@ const Teacher = require('../model/Teacher')
 const User = require('../model/User')
 const Course = require('../model/Course')
 const AppError = require('../utils/AppError')
-const { get } = require('mongoose')
 
 const createTeacher = async (teacherData) => {
     const { user, course } = teacherData
@@ -17,6 +16,10 @@ const createTeacher = async (teacherData) => {
     if (existingUser.role !== 'teacher') {
         throw new AppError('User does not have teacher role', 403);
         
+    }
+
+    if (!existingUser.isActive) {
+        throw new AppError('Cannot create a profile for an inactive user', 403)
     }
 
     const existingTeacher = await Teacher.findOne({ user })
@@ -83,9 +86,23 @@ const deleteTeacher = async (teacherId) => {
         throw new AppError('Teacher not found', 404)
     }
 
-    await teacher.deleteOne()
+    const user = await User.findById(teacher.user)
 
-    return teacher
+    if (!user) {
+        throw new AppError('Asoociated user not found', 404)
+    }
+
+    user.isActive = false
+
+    await user.save()
+
+    return {
+        teacherId: teacher._id,
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        isActive: user.isActive
+    }
 }
 
 module.exports = {

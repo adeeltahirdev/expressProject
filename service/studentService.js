@@ -15,6 +15,10 @@ const createStudent = async (studentData) => {
         throw new AppError('User does not have student role', 403)
     }
 
+    if (!existingUser.isActive) {
+        throw new AppError('Cannot create a profile for an inactive user', 403)
+    }
+
     const existingStudent = await Student.findOne({ user })
 
     if (existingStudent) {
