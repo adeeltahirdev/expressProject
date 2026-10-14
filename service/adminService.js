@@ -1,127 +1,165 @@
-const bcrypt = require('bcrypt')
-const Student = require('../model/Student')
-const Teacher = require('../model/Teacher')
-const Course = require('../model/Course')
-const Enrollment = require('../model/Enrollment')
-const Grade = require('../model/Grade')
-const Attendance = require('../model/Attendance')
-const User = require('../model/User')
-const AppError = require('../utils/AppError')
+const bcrypt = require("bcrypt")
+const Student = require("../model/Student")
+const Teacher = require("../model/Teacher")
+const Course = require("../model/Course")
+const Enrollment = require("../model/Enrollment")
+const Grade = require("../model/Grade")
+const Attendance = require("../model/Attendance")
+const User = require("../model/User")
+const AppError = require("../utils/AppError")
 
 const getDashboardStats = async () => {
-    
-    const [students, teachers, courses, enrollments, grades, attendances] = await Promise.all([
-        Student.countDocuments(),
-        Teacher.countDocuments(),
-        Course.countDocuments(),
-        Enrollment.countDocuments(),
-        Grade.countDocuments(),
-        Attendance.countDocuments(),
+  const [students, teachers, courses, enrollments, grades, attendances] =
+    await Promise.all([
+      Student.countDocuments(),
+      Teacher.countDocuments(),
+      Course.countDocuments(),
+      Enrollment.countDocuments(),
+      Grade.countDocuments(),
+      Attendance.countDocuments(),
     ])
 
-    return {
-        totalStudents: students,
-        totalTeachers: teachers,
-        totalCourses: courses,
-        totalEnrollments: enrollments,
-        totalGrades: grades,
-        totalAttendances: attendances
-    }
+  return {
+    totalStudents: students,
+    totalTeachers: teachers,
+    totalCourses: courses,
+    totalEnrollments: enrollments,
+    totalGrades: grades,
+    totalAttendances: attendances,
+  }
 }
 
 const getUsersListing = async () => {
-    const users = await User.find().select('-password -resetPasswordToken -resetPasswordExpires')
+  const users = await User.find().select(
+    "-password -resetPasswordToken -resetPasswordExpires",
+  )
 
-    return users
+  return users
 }
 
 const createAdmin = async (adminData) => {
-    const { name, email, password, role } = adminData
+  const { name, email, password, role } = adminData
 
-    const existingEmail = await User.findOne({ email })
+  const existingEmail = await User.findOne({ email })
 
-    if (existingEmail) {
-        throw new AppError('A user with this email already exists', 409)
-    }
+  if (existingEmail) {
+    throw new AppError("A user with this email already exists", 409)
+  }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+  const hashedPassword = await bcrypt.hash(password, 10)
 
-    const newAdmin = new User ({
-        name,
-        email,
-        password: hashedPassword,
-        role
-    })
+  const newAdmin = new User({
+    name,
+    email,
+    password: hashedPassword,
+    role,
+  })
 
-    await newAdmin.save()
+  await newAdmin.save()
 
-    return {
-        id: newAdmin._id,
-        name: newAdmin.name,
-        email: newAdmin.email,
-        role: newAdmin.role
-    }
+  return {
+    id: newAdmin._id,
+    name: newAdmin.name,
+    email: newAdmin.email,
+    role: newAdmin.role,
+  }
 }
 
-const updateUserRole = async (userId, role) => {
-    const user = await User.findById(userId)
+const updateUserRole = async (userId, role, actorId) => {
+  if (userId === actorId.toString()) {
+    throw new AppError("You cannot change your own role", 403)
+  }
 
-    if (!user) {
-        throw new AppError('User not found', 404)
-    }
+  const user = await User.findById(userId)
 
-    user.role = role
+  if (!user) {
+    throw new AppError("User not found", 404)
+  }
 
-    await user.save()
+  const activeSuperAdmin = await User.countDocuments({
+    role: "superadmin",
+    isActive: true,
+  })
 
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-    }
+  if (
+    user.role === "superadmin" &&
+    role !== "superadmin" &&
+    activeSuperAdmin === 1
+  ) {
+    throw new AppError("Cannot demote the last active superadmin", 403)
+  }
+
+  user.role = role
+
+  await user.save()
+
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  }
 }
 
 const getUserById = async (userId) => {
-    const user = await User.findById(userId).select('-password -resetPasswordToken -resetPasswordExpires')
+  const user = await User.findById(userId).select(
+    "-password -resetPasswordToken -resetPasswordExpires",
+  )
 
-    if (!user) {
-        throw new AppError('User not found', 404)
-    }
+  if (!user) {
+    throw new AppError("User not found", 404)
+  }
 
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-    }
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  }
 }
 
-const softDeleteUser = async (userId) => {
-    const user = await User.findById(userId)
+const softDeleteUser = async (userId, actorId) => {
+  if (userId === actorId.toString()) {
+    throw new AppError("You cannot deactivate your own account", 403)
+  }
 
-    if (!user) {
-        throw new AppError('User not found', 404)
-    }
+  const user = await User.findById(userId)
 
-    user.isActive = false
+  if (!user) {
+    throw new AppError("User not found", 404)
+  }
 
-    await user.save()
 
-    return {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isActive: user.isActive
-    }
+ if (user.role === 'superadmin' && user.isActive) {
+    const activeSuperAdmins = await User.countDocuments({
+    role: 'superadmin',
+    isActive: true
+ })
+
+    if (activeSuperAdmins === 1) {
+        throw new AppError('Cannot deactivate the last active superadmin', 403)
+        }
+ }
+
+
+  user.isActive = false
+
+  await user.save()
+
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isActive: user.isActive,
+  }
 }
 
 module.exports = {
-    getDashboardStats,
-    getUsersListing,
-    createAdmin,
-    updateUserRole,
-    getUserById,
-    softDeleteUser
+  getDashboardStats,
+  getUsersListing,
+  createAdmin,
+  updateUserRole,
+  getUserById,
+  softDeleteUser,
 }

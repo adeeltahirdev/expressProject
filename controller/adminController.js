@@ -39,7 +39,7 @@ const createAdmin = async (req, res, next) => {
 
 const updateUserRole = async (req, res, next) => {
     try {
-        const user = await adminService.updateUserRole(req.params.userId, req.body.role)
+        const user = await adminService.updateUserRole(req.params.userId, req.body.role, req.user.id)
 
         res.status(200).json({
             message: 'Role updated successfully',
@@ -64,7 +64,7 @@ const getUserById = async (req, res, next) => {
 
 const softDeleteUser = async (req, res, next) => {
     try {
-        const user = await adminService.softDeleteUser(req.params.userId)
+        const user = await adminService.softDeleteUser(req.params.userId, req.user.id)
 
         res.status(200).json({
             message: 'User deactivated successfully',
