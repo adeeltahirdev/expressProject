@@ -27,7 +27,7 @@ const getGrades = async (req, res, next) => {
 
 const getGradeById = async (req, res, next) => {
     try {
-        const grade = await gradeService.getGradeById(req.params.gradeId)
+        const grade = await gradeService.getGradeById(req.params.gradeId, req.user)
 
         res.status(200).json({
             grade
@@ -52,7 +52,7 @@ const updateGrade = async (req, res, next) => {
 
 const deleteGrade = async (req, res, next) => {
     try {
-        const grade = await gradeService.deleteGrade(req.params.gradeId)
+        const grade = await gradeService.deleteGrade(req.params.gradeId, req.user)
 
         res.status(200).json({
             message: 'Grade deleted successfully',

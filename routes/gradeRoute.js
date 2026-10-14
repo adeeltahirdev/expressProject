@@ -7,14 +7,14 @@ const { createGradeSchema, updateGradeSchema } = require('../validation/gradeVal
 
 const router = express.Router()
 
-router.post('/', authMiddleware, checkRoles('teacher', 'admin', 'superadmin'), validate(createGradeSchema), gradeController.createGrade)
+router.post('/', authMiddleware, checkRoles('teacher'), validate(createGradeSchema), gradeController.createGrade)
 
-router.get('/', authMiddleware, checkRoles('admin', 'superadmin'), gradeController.getGrades)
+router.get('/', authMiddleware, checkRoles('teacher', 'admin', 'superadmin'), gradeController.getGrades)
 
-router.get('/:gradeId', authMiddleware, gradeController.getGradeById)
+router.get('/:gradeId', authMiddleware, checkRoles('teacher', 'admin', 'superadmin'), gradeController.getGradeById)
 
-router.patch('/:gradeId', authMiddleware, checkRoles('teacher', 'admin', 'superadmin'), validate(updateGradeSchema), gradeController.updateGrade)
+router.patch('/:gradeId', authMiddleware, checkRoles('teacher', 'superadmin'), validate(updateGradeSchema), gradeController.updateGrade)
 
-router.delete('/:gradeId', authMiddleware, checkRoles('admin', 'superadmin'), gradeController.deleteGrade)
+router.delete('/:gradeId', authMiddleware, checkRoles('teacher', 'superadmin'), gradeController.deleteGrade)
 
 module.exports = router

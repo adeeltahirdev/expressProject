@@ -7,14 +7,14 @@ const { createEnrollmentSchema, updateEnrollmentSchema} = require('../validation
 
 const router = express.Router()
 
-router.post('/', authMiddleware, checkRoles('admin', 'superadmin'), validate(createEnrollmentSchema), enrollmentController.createEnrollment)
+router.post('/', authMiddleware, checkRoles('superadmin'), validate(createEnrollmentSchema), enrollmentController.createEnrollment)
 
 router.get('/', authMiddleware, checkRoles('admin', 'superadmin'), enrollmentController.getEnrollments)
 
 router.get('/:enrollmentId', authMiddleware, checkRoles('admin', 'superadmin'), enrollmentController.getEnrollmentById)
 
-router.patch('/:enrollmentId', authMiddleware, checkRoles('admin', 'superadmin'), validate(updateEnrollmentSchema), enrollmentController.updateEnrollment)
+router.patch('/:enrollmentId', authMiddleware, checkRoles('superadmin'), validate(updateEnrollmentSchema), enrollmentController.updateEnrollment)
 
-router.delete('/:enrollmentId', authMiddleware, checkRoles('admin', 'superadmin'), enrollmentController.deleteEnrollment)
+router.delete('/:enrollmentId', authMiddleware, checkRoles('superadmin'), enrollmentController.deleteEnrollment)
 
 module.exports = router

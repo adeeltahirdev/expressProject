@@ -63,7 +63,7 @@ const getGrades = async () => {
     return grades
 }
 
-const getGradeById = async (gradeId) => {
+const getGradeById = async (gradeId, user) => {
     const grade = await Grade.findById(gradeId)
     .populate({
         path: 'enrollment',
@@ -85,6 +85,24 @@ const getGradeById = async (gradeId) => {
 
     if (!grade) {
         throw new AppError('Grade not found', 404)
+    }
+
+    if (user.role === 'teacher') {
+        const teacher = await Teacher.findOne({ user: user.id})
+
+        if (!teacher) {
+            throw new AppError('Teacher profile not found', 404)
+        }
+
+        const enrollment = await Enrollment.findById(grade.enrollment)
+
+        if (!enrollment) {
+            throw new AppError('Enrollment not found', 404)
+        }
+
+        if (teacher.course.toString() !== enrollment.course.toString()) {
+            throw new AppError('You can only view grades for your assigned course', 403)
+        }
     }
 
     return grade
@@ -135,11 +153,32 @@ const updateGrade = async (gradeId, gradeData, user) => {
     return grade
 }
 
-const deleteGrade = async (gradeId) => {
+const deleteGrade = async (gradeId, user) => {
     const grade = await Grade.findById(gradeId)
 
     if (!grade) {
         throw new AppError('Grade not found', 404)
+    }
+
+    if (user.role === 'teacher') {
+        const teacher = await Teacher.findOne({ user: user.id })
+
+        if (!teacher) {
+            throw new AppError('Teacher profile not found', 404)
+        }
+
+        const enrollment = await Enrollment.findById(grade.enrollment)
+
+        if (!enrollment) {
+            throw new AppError('Enrollment not found', 404)
+        }
+
+        if (teacher.course.toString() !== enrollment.course.toString()) {
+            throw new AppError(
+                'You can only delete grades for your assigned course',
+                403
+            )
+        }
     }
 
     await grade.deleteOne()
